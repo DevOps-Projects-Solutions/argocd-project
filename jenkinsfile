@@ -16,8 +16,7 @@ stage("clone the project git repo"){
 stage("Build the image"){
       steps{
        script {
-          sh 'ls'
-          docker.build( IMAGE_TO_BE_PUSHED , 'argocd-project/restaurant_website')
+          docker.build( IMAGE_TO_BE_PUSHED , 'restaurant_website')
          }
      }
      }
