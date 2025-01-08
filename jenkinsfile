@@ -4,12 +4,70 @@ agent any
 environment {
             DOCKER_REGISTRTY = 'sekovv'
             IMAGE_NAME = "my-web-app"
-            
+            IMAGE_TO_BE_PUSHED = "${DOCKER_REGISTRTY}/${IMAGE_NAME}:${BUILD_NUMBER}"
+            GIT_CREDENTIALS_ID = 'git_credintial'
         }
 stages{
 stage("clone the project git repo"){
+      steps{
+      git branch: 'main', url: 'https://github.com/DevOps-Projects-Solutions/argocd-project'
+     }
+     }
+stage("Build the image"){
+      steps{
+       script {
+          docker.build( IMAGE_TO_BE_PUSHED , 'argocd-project/restaurant_website')
+         }
+     }
+     }
+stage("TEST the image"){
+      steps{
+       script{
+       sh 'echo running test'
+       }
+     }
+     }
+stage(" push the image "){
+      steps{
+       script{
+         docker.withRegistry('https://index.docker.io/v1/', 'docker_hub_log') {
+                docker.image( IMAGE_TO_BE_PUSHED ).push()
+            }
+       }
+     }
+     }
+stage(" clean up space"){
+      steps{
+       script{
+        sh "docker rmi ${IMAGE_TO_BE_PUSHED}"
+     }
+     }
+  }
 
+stage("change the image name"){
+      steps{
+       script{
+        sh ' sed -i "s|image:.*|image: ${DOCKER_REGISTRTY}/${IMAGE_NAME}:${BUILD_NUMBER}|" argocd-project/app.yaml '
      }
 
+
+}
+}
+stage("push chages to github"){
+      steps{
+       script{
+                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                            git config user.name "Jenkins CI"
+                            git config user.email "jenkins@example.com"
+                            git add .
+                            git commit -m "Editing yaml file with image of ${DOCKER_REGISTRTY}/${IMAGE_NAME}:${BUILD_NUMBER}"
+                            git push https://${GIT_USER}:${GIT_PASS}@github.com/DevOps-Projects-Solutions/argocd-project.git main
+                        '''
+     }
+     }
   }
+
+}
+}
 }
