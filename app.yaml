@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: simple-website
-        image: sekovv/my-web-app:latest # Replace with your image
+        image: sekovv/my-web-app:4
         ports:
         - containerPort: 80
 ---
