@@ -1,0 +1,15 @@
+pipeline
+{
+agent any
+environment {
+            DOCKER_REGISTRTY = 'sekovv'
+            IMAGE_NAME = "my-web-app"
+            
+        }
+stages{
+stage("clone the project git repo"){
+
+     }
+
+  }
+}
