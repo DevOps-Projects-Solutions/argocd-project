@@ -47,7 +47,7 @@ stage(" clean up space"){
 stage("change the image name"){
       steps{
        script{
-        sh ' sed -i "s|image:.*|image: ${DOCKER_REGISTRTY}/${IMAGE_NAME}:${BUILD_NUMBER}|" argocd-project/app.yaml '
+        sh ' sed -i "s|image:.*|image: ${DOCKER_REGISTRTY}/${IMAGE_NAME}:${BUILD_NUMBER}|" app.yaml '
      }
 
 
